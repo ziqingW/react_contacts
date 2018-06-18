@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import 'font-awesome/css/font-awesome.min.css';
-import { BrowserRouter, Route, Link, Switch, Redirect} from 'react-router-dom';
+import { BrowserRouter, Route, Link, Switch } from 'react-router-dom';
 
 // preSet contacts
 var preList = localStorage.getItem('localContacts') ?
@@ -72,6 +72,7 @@ class SidePanel extends React.Component {
             currentCard : props.currentCard,
             searchContacts : props.searchContacts,
             isFaved : props.isFaved,
+            
         };
     }
 
@@ -99,6 +100,11 @@ class SidePanel extends React.Component {
            isFaved : !this.state.isFaved 
         });  
         this.props.showFavs();
+    }
+    
+    //add new button    
+    addNew = () => {
+        this.props.addNew();
     }
     
     //check individual namecard    
@@ -130,13 +136,12 @@ class SidePanel extends React.Component {
             simpleCards = this.state.searchContacts.slice();
         }
         console.log(simpleCards);
-        const slug = this.state.searchContacts.length>0 ? this.state.searchContacts[this.state.currentCard].id : null;
         return (
-            simpleCards.length > 0 ?
-            (<div>
+            <div>
             <div>
             <input type="text" onChange={this.searchedContacts}/>
             <button onClick={()=>this.showFavs()}>fav</button>
+            <button onClick={()=>this.addNew()}>New</button>
             </div>
             <div>{ simpleCards.map( (contact, index) => {
                     return (
@@ -146,58 +151,104 @@ class SidePanel extends React.Component {
                     </div>);
                 })
                 }</div>
-            <div>
-            <p>Name: {this.state.searchContacts[this.state.currentCard].name}</p>
-            <p>E-mail: {this.state.searchContacts[this.state.currentCard].email}</p>
-            <p>Phone number: {this.state.searchContacts[this.state.currentCard].number}</p>
-            <p>Address: {this.state.searchContacts[this.state.currentCard].address}</p>
-            <p>City: {this.state.searchContacts[this.state.currentCard].city}</p>
-            <p>props: {this.state.searchContacts[this.state.currentCard].props}</p>
-            <p>Zip: {this.state.searchContacts[this.state.currentCard].zip}</p>
-            <Link to={`/delete/:${slug}`}><button>Delete</button></Link>
-            <Link to={`/edit/:${slug}`}><button onClick={()=>this.props.editPerson()}>Edit</button></Link>
             </div>
-            </div>
-            )
-            : <div />
             );
     }
 }
 
+// individual name card
+class IndividualCard extends React.Component {
+    constructor (props) {
+        super (props);
+    }
+    
+    render() {
+        return (
+            <div>
+            <p>Name: {this.props.searchContacts[this.props.currentCard].name}</p>
+            <p>E-mail: {this.props.searchContacts[this.props.currentCard].email}</p>
+            <p>Phone number: {this.props.searchContacts[this.props.currentCard].number}</p>
+            <p>Address: {this.props.searchContacts[this.props.currentCard].address}</p>
+            <p>City: {this.props.searchContacts[this.props.currentCard].city}</p>
+            <p>props: {this.props.searchContacts[this.props.currentCard].props}</p>
+            <p>Zip: {this.props.searchContacts[this.props.currentCard].zip}</p>
+            </div>
+        );
+    }
+}
+
+//delete current card button
+class DeleteButton extends React.Component {
+    constructor (props) {
+        super (props);
+    }
+    
+    deletePerson = () => {
+        let i = this.props.currentCard;
+        let deletedSearchContacts = Object.assign([], this.props.searchContacts);
+        let deletedId = deletedSearchContacts.splice(i, 1)[0]['id'];
+        let deletedContacts = this.props.contacts.slice().filter(contact => contact.id !== deletedId);
+        this.props.deletePerson(deletedContacts);
+    }
+    
+    render() {
+        return <button onClick={()=>this.deletePerson()}>Delete</button>;
+    }
+}
+
+//edit current card button
+class EditButton extends React.Component {
+    constructor (props) {
+        super (props);
+    }
+    
+    //edit current card
+    editPerson = () => {
+        let previousContacts = JSON.stringify(this.props.searchContacts);
+        this.props.editPerson(previousContacts);
+    }
+    
+    render() {
+        return <button onClick={()=>this.editPerson()}>Edit</button>;
+    }
+}
 // edit form
 class EditForm extends React.Component {
     constructor (props) {
         super (props);
-        this.state = {
-            currentCard : props.currentCard,
-            contacts : props.contacts
-        };
+    }
+    // submit button for update
+    updateSubmit = e => {
+        e.preventDefault();
+        this.props.updateSubmit();
     }
 
     // update contact
     updateItem = event => {
         let item = event.target.name;
-        let updateContacts = this.state.contacts.slice();
-        let index = this.state.currentCard;
+        let updateContacts = this.props.contacts.slice();
+        let index = this.props.currentCard;
         updateContacts[index][item] = event.target.value;
-        this.setState({
-            contacts: updateContacts.slice(),
-        });
         this.props.updateItem(updateContacts);
     }
 
+    // cancel submit
+    cancelEdit = () => {
+        let previousContacts = JSON.parse(this.props.precontacts);
+        this.props.cancelEdit(previousContacts);
+    }
     render() {
         return (
-            <form>
-            <label>Name: </label><input type="text" name="name" value={this.state.contacts[this.state.currentCard].name} onChange={this.updateItem}/>
-            <label>E-mail: </label><input type="email" name="email" value={this.state.contacts[this.state.currentCard].email} onChange={this.updateItem}/>
-            <label>Phone number: </label><input type="text" name="number" value={this.state.contacts[this.state.currentCard].number} onChange={this.updateItem}/>
-            <label>Address: </label><input type="text" name="address" value={this.state.contacts[this.state.currentCard].address} onChange={this.updateItem}/>
-            <label>City: </label><input type="text" name="city" value={this.state.contacts[this.state.currentCard].city} onChange={this.updateItem}/>
-            <label>State: </label><input type="text" name="props" value={this.state.contacts[this.state.currentCard].props} onChange={this.updateItem}/>
-            <label>Zip: </label><input type="text" name="zip" value={this.state.contacts[this.state.currentCard].zip} onChange={this.updateItem}/>
-            <Link to="/"><button onClick={()=>this.props.cancelEdit()}>Cancel</button></Link>
-            <Link to="/"><button onClick={()=>this.props.updateSubmit()}>Submit</button></Link>
+            <form onSubmit={this.updateSubmit}>
+            <label>Name: </label><input type="text" name="name" value={this.props.searchContacts[this.props.currentCard].name} onChange={this.updateItem}/>
+            <label>E-mail: </label><input type="email" name="email" value={this.props.searchContacts[this.props.currentCard].email} onChange={this.updateItem}/>
+            <label>Phone number: </label><input type="text" name="number" value={this.props.searchContacts[this.props.currentCard].number} onChange={this.updateItem}/>
+            <label>Address: </label><input type="text" name="address" value={this.props.searchContacts[this.props.currentCard].address} onChange={this.updateItem}/>
+            <label>City: </label><input type="text" name="city" value={this.props.searchContacts[this.props.currentCard].city} onChange={this.updateItem}/>
+            <label>State: </label><input type="text" name="props" value={this.props.searchContacts[this.props.currentCard].props} onChange={this.updateItem}/>
+            <label>Zip: </label><input type="text" name="zip" value={this.props.searchContacts[this.props.currentCard].zip} onChange={this.updateItem}/>
+            <button onClick={()=>this.cancelEdit()}>Cancel</button>
+            <button type="submit">Submit</button>
             </form>
         );
     }
@@ -230,6 +281,7 @@ class NewForm extends React.Component {
     // cancel adding new contact
     cancelNew = () => {
         let cancelNewPerson = Object.assign({}, this.state.newPersonCopy);
+        
         this.props.cancelNew(cancelNewPerson);
         this.setState({
             newPerson: cancelNewPerson
@@ -237,7 +289,8 @@ class NewForm extends React.Component {
     }
 
     // submit new contact
-    updateNew = () => {
+    updateNew = e => {
+        e.preventDefault();
         let newContact = Object.assign({}, this.state.newPerson);
         newContact['id'] = this.state.givenId;
         let contactsCopy = this.state.contacts.slice();
@@ -252,10 +305,12 @@ class NewForm extends React.Component {
             searchContacts: contactsCopy.slice(),
         });
     }
-    
+
     render() {
+        console.log("added");
+        console.log("newperson", this.state.newPerson);
         return (
-            <form>
+            <form onSubmit={this.updateNew}>
                 <label>Name: </label><input type="text" name="name" onChange={this.newItem}/>
                 <label>E-mail: </label><input type="email" name="email" onChange={this.newItem}/>
                 <label>Phone number: </label><input type="text" name="number" onChange={this.newItem}/>
@@ -264,7 +319,7 @@ class NewForm extends React.Component {
                 <label>State: </label><input type="text" name="state" onChange={this.newItem}/>
                 <label>Zip: </label><input type="text" name="zip" onChange={this.newItem}/>
                 <Link to="/"><button onClick={()=>this.cancelNew()}>Cancel</button></Link>
-                <Link to="/added"><button onClick={()=>this.updateNew()}>Submit</button></Link>
+                <button type="submit">Submit</button>
                 </form>
         );
     }
@@ -289,7 +344,9 @@ class App extends React.Component {
             contacts: sortContacts(preList['contacts']).slice(),
             precontacts: null,
             currentCard: 0,
+            edit: false,
             isFaved: false,
+            addNew : false,
             searchContacts: sortContacts(preList['contacts']).slice(),
             givenId: preList['givenId'],
             newPerson: Object.assign({}, newPerson),
@@ -309,13 +366,16 @@ class App extends React.Component {
         });    
     }
     
+    addNew = () => {
+        this.setState ({
+           addNew : true 
+        });
+    }
+    
     checkPerson = i => {
         this.setState ({
             currentCard : i
-        }, () => {
-           console.log("current id", this.state.currentCard); 
-        });
-        
+        });    
     }
     
     favorite = searchContactsCopy => {
@@ -324,11 +384,7 @@ class App extends React.Component {
         });
     }
     
-    deletePerson = () => {
-        let i = this.state.currentCard;
-        let deletedSearchContacts = Object.assign([], this.state.searchContacts);
-        let deletedId = deletedSearchContacts.splice(i, 1)[0]['id'];
-        let deletedContacts = this.state.contacts.slice().filter(contact => contact.id !== deletedId);
+    deletePerson = deletedContacts => {
         this.setState({
             contacts: deletedContacts.slice(),
             searchContacts: deletedContacts.slice(),
@@ -338,19 +394,18 @@ class App extends React.Component {
             localStorage.setItem('localContacts', localSave);
         });
     }
-
-    //edit current card    
-    editPerson = () => {
-        let previousContacts = JSON.stringify(this.state.searchContacts);
+    
+    editPerson = previousContacts => {
         this.setState({
             precontacts: previousContacts,
+            edit: true
         });
     }
     
     updateSubmit = () => {
         this.setState({
             precontacts: null,
-
+            edit: false
         }, function() {
             let localSave = JSON.stringify({ contacts: this.state.contacts, givenId: this.state.givenId });
             localStorage.setItem('localContacts', localSave);
@@ -364,12 +419,12 @@ class App extends React.Component {
         });
     }
     
-    cancelEdit = () => {
-        let previousContacts = JSON.parse(this.state.precontacts);
+    cancelEdit = previousContacts => {
         this.setState({
             contacts: previousContacts.slice(),
             searchContacts: previousContacts.slice(),
             precontacts: null,
+            edit: false,
         });
     }
     
@@ -400,48 +455,39 @@ class App extends React.Component {
     }
     
     render () {
+        console.log(this.state.searchContacts);
+        console.log(this.state.contacts);
         return <div />;
     }
+    // render() {
+    //     console.log(this.state.searchContacts);
+    //     return (
+    //         <div >
+    //         <Header />
+    //         <SidePanel contacts={this.state.contacts}
+    //         searchContacts={this.state.searchContacts}
+    //         isFaved={this.state.isFaved}
+    //         addNew={this.state.addNew}/>
+    //         </div>
+    //         // {this.state.searchContacts.length > 0 ?
+    //         // (<div>{this.SimpleContacts()}
+    //         // {this.state.addNew ? this.NewForm() : (this.state.edit ? this.EditForm() : this.IndividualCard())}
+    //         // </div> )
+    //         // : <div /> }
+    //         // </div>
+    //     );
 }
 
 
 ReactDOM.render(<App ref={(App) => {window.App = App}} />, document.getElementById("root"));
 
-class Message extends React.Component {
-    constructor (props) {
-        super (props);
-        this.state = {
-            redirect : false
-        };
-    }
-    
-    componentDidMount() {
-        this.delay = setInterval(()=> {
-            this.setState({
-                redirect : true
-            });
-        }, 2000);
-    }
-    
-    componentWillUnmount() {
-       clearInterval(this.delay);
-    }
-    
-    render () {
-        return (
-        this.state.redirect ? <Redirect to="/" /> : <div><h5>{this.props.message}</h5><h5>This page will be redirected in 2 sec</h5></div>
-        );
-    }
-}
-
-const MessageNew = () => (<Message message="New contact successfully added" />);
-
-const MessageDelete = () => (<Message message="Contact successfully deleted" />);
-
 const Main = () => (
     <div>
     <Header />
-    <SidePanel contacts={window.App.state.contacts} searchedContacts={window.App.searchedContacts} showFavs={window.App.showFavs} addNew={window.App.addNew} currentCard={window.App.state.currentCard} checkPerson={window.App.checkPerson} searchContacts={window.App.state.searchContacts} favorite={window.App.favorite} isFaved={window.App.state.isFaved} editPerson={window.App.editPerson}/>
+    <SidePanel contacts={window.App.state.contacts} searchedContacts={window.App.searchedContacts} showFavs={window.App.showFavs} addNew={window.App.addNew} currentCard={window.App.state.currentCard} checkPerson={window.App.checkPerson} searchContacts={window.App.state.searchContacts} favorite={window.App.favorite} isFaved={window.App.state.isFaved} />
+    <div>
+    <IndividualCard searchContacts={window.App.state.searchContacts} currentCard={window.App.state.currentCard}/>
+    </div>
     </div>
     );
 
@@ -451,27 +497,16 @@ const NewContact = () => (
     givenId={window.App.state.givenId}/>
     );
 
-const Delete = () => (<div>
-<h5>Are you sure to delete this person?</h5>
-<Link to="/deletemessage"><button onClick={()=>window.App.deletePerson()}>Yes</button></Link>
-<Link to="/"><button>No</button></Link>
-</div>);
 
-const Edit = () => (
-    <EditForm contacts={window.App.state.contacts} currentCard={window.App.state.currentCard} updateItem={window.App.updateItem} cancelEdit={window.App.cancelEdit} updateSubmit={window.App.updateSubmit}/>
-    );
+
 
 ReactDOM.render((<BrowserRouter>
   <div>
     <ul>
       <li><Link to="/">Home</Link></li>
-      <li><Link to="/new">Add New</Link></li>
+      <li><Link to="/form">Form</Link></li>
     </ul>
     <Route exact path="/" component={Main}/>
-    <Route path="/new" component={NewContact}/>
-    <Route path="/added" component={MessageNew} />
-    <Route path="/delete/:id" component={Delete} />
-    <Route path="/edit/:id" component={Edit} />
-    <Route path="/deletemessage" component={MessageDelete} />
+    <Route path="/form" component={NewContact}/>
   </div>
 </BrowserRouter>), document.getElementById("app"));
