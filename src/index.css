@@ -1,0 +1,280 @@
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    background: #ededed;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+.main {
+    width: 92%;
+    max-width: 850px;
+    height: 85%;
+    margin: 0 auto;
+    padding: 0 3%;
+}
+
+.major {
+    height: 100%;
+}
+
+#app {
+    height: 100%;
+}
+
+.control-panel {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+
+    height: 2em;
+    width: 100%;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.control-panel li {
+    display: inline;
+    margin-left: 8%;
+}
+
+.control-panel li a {
+    text-decoration: none;
+    color: #477db7;
+}
+
+.control-panel li a:hover {
+    color: #6aabf2;
+}
+
+.search-panel input {
+    background-color: #ddd;
+    width: 80%;
+    height: 3em;
+    max-width: 500px;
+    padding-left: 1%;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+}
+
+.btns {
+    font-size: 0.9em;
+    width: 45px;
+    height: 38px;
+    margin-left: 2%;
+    border: 2px solid #ddd;
+    box-shadow: 1px 1px 2px black;
+    border-radius: 2px;
+    background-color: #ddd;
+}
+
+.btns:hover {
+    cursor: pointer;
+    color: #e51b5b;
+}
+
+.faved {
+    background-color: #387cc1;
+    border-color: #387cc1;
+    color: white;
+}
+
+.message {
+    font-size: 1.1em;
+}
+
+.info-panel {
+    margin-top: 5%;
+    display: flex;
+    max-height: 500px;
+    height: 100%;
+    align-items: flex-start;
+}
+
+.small-cards {
+    height: 100%;
+    max-height: 490px;
+    overflow: scroll;
+    width: 33%;
+    max-width: 180px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    box-sizing: border-box;
+    border-radius: 8px;
+    font-size: 0.9em;
+    align-items: center;
+}
+
+.small-card {
+    font-size: 0.9em;
+
+    padding: 1%;
+    background-color: #cde2f7;
+    ;
+    width: 88%;
+    margin: 5% 0 2% 0;
+    border-radius: 5px;
+}
+
+.small-card span {
+    margin-left: 25%;
+}
+
+.small-card span:hover {
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.small-card p {
+    margin-left: 5%;
+}
+
+.small-card i {
+    cursor: pointer;
+}
+
+.nofav {
+    color: #575757;
+}
+
+.fav {
+    color: #e51b5b;
+    ;
+}
+
+.detail-back {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.detail-card {
+    width: 90%;
+    max-width: 300px;
+    min-height: 400px;
+    box-sizing: border-box;
+}
+
+.detail-card p {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    /*height: 100%;*/
+}
+
+.detail-card-info {
+    padding: 1% 3%;
+    font-size: 0.9em;
+    border: 2px solid #a9bacc;
+    background-color: #cde2f7;
+    border-radius: 5px;
+    min-height: 320px;
+}
+
+.detail-card p span:first-of-type {
+    font-weight: bold;
+}
+
+.button-panel {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-detail {
+    font-size: 0.9em;
+    width: 60px;
+    height: 38px;
+    margin: 20px;
+}
+
+.btn-detail-delete {
+    border: 0;
+    background-color: #ededed;
+}
+
+.btn-detail-delete:hover {
+    color: red;
+}
+
+.btn-detail:hover {
+    cursor: pointer;
+}
+
+.btn-detail-edit {
+    border: 2px solid #ddd;
+    box-shadow: 1px 1px 2px black;
+    border-radius: 2px;
+    background-color: #ddd;
+}
+
+.btn-detail-edit:hover {
+    color: green;
+}
+
+.new-form-back {
+    display: flex;
+    justify-content: center;
+    margin-top: 5%;
+}
+
+.new-form-back>div {
+    width: 100%;
+}
+
+.new-form {
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.new-form div {
+    margin: 0.2em;
+    display: flex;
+    justify-content: space-between;
+}
+
+.new-form input {
+    padding: 0.2em;
+    text-align: right;
+    width: 55%;
+}
+
+.new-form div label {
+    font-weight: 500;
+}
+
+.new-form-btns {
+    margin-top: 2em;
+}
+
+.new-form-btns button:last-child {
+    width: 70px;
+}
+
+.message-info {
+    width: 100%;
+    max-width: 450px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.message-info p {
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+.message-info h5 {
+    font-weight: 400;
+}
