@@ -2,6 +2,10 @@
   "name": "react_contacts",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "npm": "5.8.0",
+    "node": "8.9.4"
+  },
   "dependencies": {
     "@fortawesome/react-fontawesome": "0.0.20",
     "@material-ui/core": "^1.2.1",
